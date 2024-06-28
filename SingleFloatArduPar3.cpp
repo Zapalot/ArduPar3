@@ -48,6 +48,7 @@ void SingleFloatArduPar3::setValue(float newValue)
     TRACE((F("\n")));
     if (newValue != *valuePointer)
     {
+    TRACE((F("is new!")));
         *valuePointer = newValue;
         valueHasChanged = true; // flag: I got new data!
     }
@@ -58,7 +59,7 @@ bool SingleFloatArduPar3::getAndClearValueChangedFlag()
 {
     bool returnValue = valueHasChanged;
     valueHasChanged = false;
-    return valueHasChanged;
+    return returnValue;
 }
 void SingleFloatArduPar3::save()
 {
@@ -80,8 +81,8 @@ void SingleFloatArduPar3::load()
         TRACE((F("Loading from EEPROM. Address: ")));
         // TRACE((int)(nvsAddress));
         float tempFloat = 0;
-        NvsManager::read_bytes(&tempFloat, nvsAddress, sizeof(float));
-        if (std::isfinite(tempFloat))
+        bool success=NvsManager::read_bytes(&tempFloat, nvsAddress, sizeof(float));
+        if (success)
         {
             *valuePointer = tempFloat;
         }
@@ -90,7 +91,7 @@ void SingleFloatArduPar3::load()
     }
 }
 
-void SingleFloatArduPar3::dumpParameterInfo(Stream *out)
+void SingleFloatArduPar3::dumpParameterInfo(Stream *out) const
 {
     out->print(F("float\t"));
     out->print(this->addressString);
@@ -107,12 +108,19 @@ void SingleFloatArduPar3::dumpParameterInfo(Stream *out)
 
 void SingleFloatArduPar3::parseCommand(char *data)
 {
-    TRACE((F("Matching serial cmd")));
-    TRACE((addressString));
-    TRACE((F("to")));
-    TRACELN((data));
     int foundDiff = strncmp_P(data, (const char PROGMEM *)addressString, addressLength);
     size_t dataLen = strlen(data);
+    TRACE((F("Matching serial cmd ")));
+    TRACE((addressString));
+    TRACE((F(" to ")));
+    TRACE((data));
+    TRACE((F(" addlen: ")));
+    TRACE(addressLength);
+    TRACE((F(" datalen: ")));
+    TRACELN(dataLen);
+
+
+
     // check if the command continues beyond the address
     if (dataLen > addressLength)
     {
@@ -133,17 +141,17 @@ void SingleFloatArduPar3::setValueFromText(const char *data)
     setValue(atof(data));
 }
 
-size_t SingleFloatArduPar3::getValueAsText(char *buffer, size_t buflength)
+size_t SingleFloatArduPar3::getValueAsText(char *buffer, size_t buflength) const
 {
     //  write value as a human readable text, with at most buflength characters
     return snprintf(buffer, buflength, "%f", getValue());
 };
-size_t SingleFloatArduPar3::getValueTextLength()
+size_t SingleFloatArduPar3::getValueTextLength()const
 {
     return snprintf(NULL, 0, "%f", getValue());
 }
 
-AbstractArduPar3::ArduPar3Type SingleFloatArduPar3::getType(size_t position)
+AbstractArduPar3::ArduPar3Type SingleFloatArduPar3::getType(size_t position)const
 {
     return position == 0 ? AbstractArduPar3::ArduPar3TypeFloat : ArduPar3TypeNone;
 };
@@ -169,19 +177,19 @@ void SingleFloatArduPar3::setValueFromDouble(double value, size_t position)
 }
 
 // same here: these methods are primarily inteded to make interfaceing simple, imeplement them as you think they make sense
-float SingleFloatArduPar3::getValueAsFloat(size_t position)
+float SingleFloatArduPar3::getValueAsFloat(size_t position) const
 {
     return (position == 0 ? getValue() : 0);
 }
-int32_t SingleFloatArduPar3::getValueAsInt32(size_t position)
+int32_t SingleFloatArduPar3::getValueAsInt32(size_t position)const
 {
     return (position == 0 ? getValue() : 0);
 }
-bool SingleFloatArduPar3::getValueAsBool(size_t position)
+bool SingleFloatArduPar3::getValueAsBool(size_t position)const
 {
     return (position == 0 ? getValue() : 0);
 }
-double SingleFloatArduPar3::getValueAsDouble(size_t position)
+double SingleFloatArduPar3::getValueAsDouble(size_t position)const
 {
     return (position == 0 ? getValue() : 0);
 }

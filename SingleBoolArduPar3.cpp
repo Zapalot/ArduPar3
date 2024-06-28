@@ -1,13 +1,11 @@
-#include "SingleInt32ArduPar3.h"
+#include "SingleBoolArduPar3.h"
 
 
-void SingleInt32ArduPar3::setup(
+void SingleBoolArduPar3::setup(
      ARDUPAR_CONST_CHAR *address,
      ARDUPAR_CONST_CHAR *description,
-    int32_t minValue,
-    int32_t maxValue,
-    int32_t *valuePointer,  ///< the setting can modify an arbitrary location im memory if you give it here.
-    boolean isPersistent , ///< should it be possible to save this setting to NVS?
+    bool *valuePointer,  ///< the setting can modify an arbitrary location im memory if you give it here.
+    bool isPersistent , ///< should it be possible to save this setting to NVS?
     ArduPar3Collection* collection ,/// will register here and get a unique id if provided
     bool useAutomaticNvsAddress,
     NvsAddress manualNvsAddress  ///< if you want a specific fixed adress, specify it here
@@ -19,8 +17,6 @@ void SingleInt32ArduPar3::setup(
     if (valuePointer == 0)
         valuePointer = &this->value;
     this->valuePointer = valuePointer;
-    this->minValue = minValue;
-    this->maxValue = maxValue;
     this->isPersistent=isPersistent;
     if(collection!=nullptr){
         uniqueId = collection->registerInstance(this);
@@ -31,7 +27,7 @@ void SingleInt32ArduPar3::setup(
         if (useAutomaticNvsAddress)
         {
             TRACE((F("Getting EEPROM. asking for auto address: ")));
-            manualNvsAddress = NvsManager::getAddressFor(addressString,sizeof(int32_t));
+            manualNvsAddress = NvsManager::getAddressFor(addressString,sizeof(bool));
         };
         this->nvsAddress = manualNvsAddress;
     }
@@ -39,9 +35,8 @@ void SingleInt32ArduPar3::setup(
 };
 
 // set the value and rpint some debug info
-void SingleInt32ArduPar3::setValue(int32_t newValue)
+void SingleBoolArduPar3::setValue(bool newValue)
 {
-    newValue = constrain(newValue, minValue, maxValue);
     TRACE((F("Setting ")));
     TRACE((this->addressString));
     TRACE((F(" to ")));
@@ -54,12 +49,12 @@ void SingleInt32ArduPar3::setValue(int32_t newValue)
 };
 
 // returns if the value has changed since the last call of this function
-bool SingleInt32ArduPar3::getAndClearValueChangedFlag(){
-bool returnValue=valueHasChanged;
-valueHasChanged=false;
-return returnValue;
+bool SingleBoolArduPar3::getAndClearValueChangedFlag(){
+	bool returnValue=valueHasChanged;
+	valueHasChanged=false;
+	return returnValue;
 }
-void SingleInt32ArduPar3::save(){
+void SingleBoolArduPar3::save(){
     // save the new value
     if (isPersistent)
     {
@@ -67,41 +62,34 @@ void SingleInt32ArduPar3::save(){
         TRACE(*valuePointer);
         TRACE(F(" to "));
         TRACELN(getAddress());
-        NvsManager::write_bytes(valuePointer, nvsAddress, sizeof(int32_t));
+        NvsManager::write_bytes(valuePointer, nvsAddress, sizeof(bool));
     }
 };
 
-void SingleInt32ArduPar3::load(){
+void SingleBoolArduPar3::load(){
     if (isPersistent)
     {
         TRACE((F("Loading from EEPROM. Address: ")));
         //TRACE((int)(nvsAddress));
-        int32_t tempInt32 = 0;
-        bool success=NvsManager::read_bytes(&tempInt32, nvsAddress, sizeof(int32_t));
-        if (success)
-        {
-            *valuePointer = tempInt32;
-        }
+        bool tempVal = 0;
+        NvsManager::read_bytes(&tempVal, nvsAddress, sizeof(bool));
+			*valuePointer = tempVal;
         TRACE((F(" value:")));
         TRACELN((*valuePointer));
     }
 }
 
-void SingleInt32ArduPar3::dumpParameterInfo(Stream *out){
-    out->print(F("int32_t\t"));
+void SingleBoolArduPar3::dumpParameterInfo(Stream *out)const{
+    out->print(F("bool\t"));
     out->print(this->addressString);
     out->print(F("\t"));
     out->print(this->descriptionString);
     out->print(F("\t"));
     out->print(*valuePointer);
-    out->print(F("\t"));
-    out->print(minValue);
-    out->print(F("\t"));
-    out->print(maxValue);
     out->print(F("\n"));
 }
 
-void SingleInt32ArduPar3::parseCommand(char *data){
+void SingleBoolArduPar3::parseCommand(char *data){
     TRACE((F("Matching serial cmd")));
     TRACE((addressString));
     TRACE((F("to")));
@@ -120,46 +108,46 @@ void SingleInt32ArduPar3::parseCommand(char *data){
     }
 }
 // digest incoming string that only contains the value to be set (should be able to parse output of "getValueAsText")
-void SingleInt32ArduPar3::setValueFromText(const char *data)
+void SingleBoolArduPar3::setValueFromText(const char *data)
 {
     setValue(atol(data));
 }
 
-size_t SingleInt32ArduPar3::getValueAsText(char *buffer, size_t buflength){
+size_t SingleBoolArduPar3::getValueAsText(char *buffer, size_t buflength)const{
 //  write value as a human readable text, with at most buflength characters
 return snprintf(buffer,buflength,"%ld",(long)getValue());
 }; 
-size_t SingleInt32ArduPar3::getValueTextLength(){
+size_t SingleBoolArduPar3::getValueTextLength()const{
     return snprintf(NULL,0,"%ld",(long)getValue());
 }                        
 
-AbstractArduPar3::ArduPar3Type SingleInt32ArduPar3::getType(size_t position ){
-return position==0?AbstractArduPar3::ArduPar3TypeInt32:ArduPar3TypeNone;
+AbstractArduPar3::ArduPar3Type SingleBoolArduPar3::getType(size_t position )const{
+return position==0?AbstractArduPar3::ArduPar3TypeBool:ArduPar3TypeNone;
 };                   
-void SingleInt32ArduPar3::setValueFromFloat(float value, size_t position )
+void SingleBoolArduPar3::setValueFromFloat(float value, size_t position )
 {
-    if(position==0)    setValue(value);
+    if(position==0)    setValue(value>0.5f);
 }
-void SingleInt32ArduPar3::setValueFromInt32(int32_t value, size_t position ){
+void SingleBoolArduPar3::setValueFromInt32(int32_t value, size_t position ){
+        if(position==0)    setValue(value>0);
+}
+void SingleBoolArduPar3::setValueFromBool(bool value, size_t position ){
         if(position==0)    setValue(value);
 }
-void SingleInt32ArduPar3::setValueFromBool(bool value, size_t position ){
-        if(position==0)    setValue(value);
-}
-void SingleInt32ArduPar3::setValueFromDouble(double value, size_t position ){
-    if(position==0)    setValue(value);
+void SingleBoolArduPar3::setValueFromDouble(double value, size_t position ){
+    if(position==0)    setValue(value>0.5f);
 }
 
-// same here: these methods are primarily inteded to make interfaceing simple, imeplement them as you think they make sense
-float SingleInt32ArduPar3::getValueAsFloat(size_t position ){
+// same here: these methods are primarily inteded to make interfaceing simple, implement them as you think they make sense
+float SingleBoolArduPar3::getValueAsFloat(size_t position )const{
     return (position==0?getValue():0);
 }
-int32_t SingleInt32ArduPar3::getValueAsInt32(size_t position ){
+int32_t SingleBoolArduPar3::getValueAsInt32(size_t position )const{
     return (position==0?getValue():0);
 }
-bool SingleInt32ArduPar3::getValueAsBool(size_t position ){
+bool SingleBoolArduPar3::getValueAsBool(size_t position )const{
     return (position==0?getValue():0);
 }
-double SingleInt32ArduPar3::getValueAsDouble(size_t position ){
+double SingleBoolArduPar3::getValueAsDouble(size_t position )const{
     return (position==0?getValue():0);
 }

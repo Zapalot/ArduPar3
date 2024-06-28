@@ -3,6 +3,7 @@
 #ifdef __XTENSA__
 #include <Preferences.h>
 #endif
+#include "Arduino.h"
 /// encapsulates a device independent storage location for non volatile storage
 class NvsAddress{
 	public:

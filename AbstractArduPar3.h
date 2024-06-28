@@ -10,15 +10,15 @@
 class AbstractArduPar3
 {
 public:
-  virtual ARDUPAR_CONST_CHAR *getAddress() = 0;                    ///< get an address that will be used to pass information to this Parameter. Doesn't have to be unique. For osc compatibility and ease of building interfaces, a valid OSC address format like "/machine/part/setting" is recommended
-  virtual ARDUPAR_CONST_CHAR *getDescription() = 0;                ///< a human readable description of the parameter
-  virtual int getId() = 0;                                         ///< a uinique identifier
+  virtual ARDUPAR_CONST_CHAR *getAddress()const = 0;                    ///< get an address that will be used to pass information to this Parameter. Doesn't have to be unique. For osc compatibility and ease of building interfaces, a valid OSC address format like "/machine/part/setting" is recommended
+  virtual ARDUPAR_CONST_CHAR *getDescription() const= 0;                ///< a human readable description of the parameter
+  virtual int getId()const = 0;                                         ///< a uinique identifier
   virtual void save() = 0;                                         ///< save content to NVM
   virtual void load() = 0;                                         ///< save content from NVM
-  virtual void dumpParameterInfo(Stream *out) = 0;                 ///< derived classed can give some information about semselves this way. preferably in a machine-readable way.
+  virtual void dumpParameterInfo(Stream *out) const = 0;                 ///< derived classed can give some information about semselves this way. preferably in a machine-readable way.
   virtual void parseCommand(char *data) = 0;                       ///< digest incoming string data that potentially contains a "set" command
-  virtual size_t getValueAsText(char *buffer, size_t buflength) = 0; ///<  write value as a human readable text, with at most buflength characters
-  virtual size_t getValueTextLength() = 0;                         ///< get size of the buffer needed for getValueAsText()
+  virtual size_t getValueAsText(char *buffer, size_t buflength)const  = 0; ///<  write value as a human readable text, with at most buflength characters
+  virtual size_t getValueTextLength() const= 0;                         ///< get size of the buffer needed for getValueAsText()
 
   // we allow setting the parameter from a wide range fo data types, so interfaces can be built for a lot of different use cases
   // just implement them as you see fit, they might also just do nothing at all...
@@ -30,10 +30,10 @@ public:
   virtual void setValueFromDouble(double value, size_t position = 0) = 0; ///< set Value using a integer point Number. Bools can be handles by 0/1 (and possibly a some single component of a vector)
 
   // same here: these methods are primarily inteded to make interfaceing simple, implement them as you think they make sense
-  virtual float getValueAsFloat(size_t position = 0) = 0;
-  virtual int32_t getValueAsInt32(size_t position = 0) = 0;
-  virtual bool getValueAsBool(size_t position = 0) = 0;
-  virtual double getValueAsDouble(size_t position = 0) = 0;
+  virtual float getValueAsFloat(size_t position = 0) const = 0;
+  virtual int32_t getValueAsInt32(size_t position = 0) const = 0;
+  virtual bool getValueAsBool(size_t position = 0) const = 0;
+  virtual double getValueAsDouble(size_t position = 0)const  = 0;
 	/// each value has a type that can bve queried, this is primarily useful for visitor classes that build an interface
   enum ArduPar3Type
   {
@@ -45,5 +45,5 @@ public:
     ArduPar3TypeBool,
     ArduPar3TypeString
   };
-  virtual ArduPar3Type getType(size_t position = 0) = 0; ///< to aid building of user interfaces at runtime
+  virtual ArduPar3Type getType(size_t position = 0)const = 0; ///< to aid building of user interfaces at runtime
 };

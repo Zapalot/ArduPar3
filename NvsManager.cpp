@@ -15,14 +15,13 @@ NvsAddress NvsManager::getAddressFor(ARDUPAR_CONST_CHAR *key, size_t bytes)
 }
 
 ///< read raw data from permanent storage
-void NvsManager::read_bytes(void *data, NvsAddress address, int nBytes)
+bool NvsManager::read_bytes(void *data, NvsAddress address, int nBytes)
 {
-
 	eeprom_read_block(data, (void *)address.addressOffset, nBytes);
-	return true;
+	return true; // TODO: implement checksum check here
 }
 ///< write raw data to permanent storage
-void NvsManager::write_bytes(void *data, NvsAddress address, int nBytes)
+bool NvsManager::write_bytes(void *data, NvsAddress address, int nBytes)
 {
 	eeprom_write_block(data, (void *)address.addressOffset, nBytes);
 	return true;

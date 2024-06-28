@@ -3,7 +3,7 @@
 void CallbackArduPar3::setup(
     ARDUPAR_CONST_CHAR *address,
     ARDUPAR_CONST_CHAR *description,
-    void (*callbackFunction)(void), ///< A pointer to the function that will be triggered.
+    CallbackParameter, ///< A pointer to the function that will be triggered.
     ArduPar3Collection *collection  /// will register here and get a unique id if provided
 )
 {
@@ -42,7 +42,7 @@ void CallbackArduPar3::parseCommand(char *data)
     }
 };
 
-void CallbackArduPar3::dumpParameterInfo(Stream *out)
+void CallbackArduPar3::dumpParameterInfo(Stream *out)const 
 {
 
     out->print(F("trigger\t"));
