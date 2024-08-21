@@ -6,6 +6,7 @@ void SingleInt32ArduPar3::setup(
      ARDUPAR_CONST_CHAR *description,
     int32_t minValue,
     int32_t maxValue,
+    int32_t startValue,
     int32_t *valuePointer,  ///< the setting can modify an arbitrary location im memory if you give it here.
     boolean isPersistent , ///< should it be possible to save this setting to NVS?
     ArduPar3Collection* collection ,/// will register here and get a unique id if provided
@@ -16,11 +17,13 @@ void SingleInt32ArduPar3::setup(
     this->addressString = address;
     this->descriptionString = description;
     addressLength = strlen_P((const char PROGMEM *)addressString);
-    if (valuePointer == 0)
+    if (valuePointer == 0){
         valuePointer = &this->value;
+    }
     this->valuePointer = valuePointer;
     this->minValue = minValue;
     this->maxValue = maxValue;
+
     this->isPersistent=isPersistent;
     if(collection!=nullptr){
         uniqueId = collection->registerInstance(this);
@@ -35,6 +38,7 @@ void SingleInt32ArduPar3::setup(
         };
         this->nvsAddress = manualNvsAddress;
     }
+    setValue(startValue);
 
 };
 

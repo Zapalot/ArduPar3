@@ -19,6 +19,7 @@ public:
       ARDUPAR_CONST_CHAR *description,
       int32_t minValue,
       int32_t maxValue,
+		int32_t startValue =0,																			///< value will be initialized with this
       int32_t *valuePointer = 0,                                                    ///< the setting can modify an arbitrary location im memory if you give it here.
       boolean isPersistent = true,                                                  ///< should it be possible to save this setting to NVS?
       ArduPar3Collection *collection = ArduPar3Collection::globalDefaultCollection, /// will register here and get a unique id if provided

@@ -4,6 +4,8 @@
 void SingleBoolArduPar3::setup(
      ARDUPAR_CONST_CHAR *address,
      ARDUPAR_CONST_CHAR *description,
+	   bool startValue,																		///< value will be initialized with this
+
     bool *valuePointer,  ///< the setting can modify an arbitrary location im memory if you give it here.
     bool isPersistent , ///< should it be possible to save this setting to NVS?
     ArduPar3Collection* collection ,/// will register here and get a unique id if provided
@@ -17,6 +19,7 @@ void SingleBoolArduPar3::setup(
     if (valuePointer == 0)
         valuePointer = &this->value;
     this->valuePointer = valuePointer;
+
     this->isPersistent=isPersistent;
     if(collection!=nullptr){
         uniqueId = collection->registerInstance(this);
@@ -32,6 +35,7 @@ void SingleBoolArduPar3::setup(
         this->nvsAddress = manualNvsAddress;
     }
 
+	 setValue(startValue);
 };
 
 // set the value and rpint some debug info

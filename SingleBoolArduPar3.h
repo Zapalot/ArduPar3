@@ -17,6 +17,7 @@ public:
   void setup(
       ARDUPAR_CONST_CHAR *address,
       ARDUPAR_CONST_CHAR *description,
+	   bool startValue=false,																		///< value will be initialized with this
       bool *valuePointer = 0,                                                    ///< the setting can modify an arbitrary location im memory if you give it here.
       bool isPersistent = true,                                                  ///< should it be possible to save this setting to NVS?
       ArduPar3Collection *collection = ArduPar3Collection::globalDefaultCollection, /// will register here and get a unique id if provided
