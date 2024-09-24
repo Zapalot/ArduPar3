@@ -26,11 +26,12 @@ CallbackArduPar3 saveCallbackParameter;
 
 void setup(){
     ArduPar3Collection::globalDefaultCollection=&parameterCollection; // use our parameter collection as a default
-    someFloatParameter.setup(F("/someFloat"),F("An exquisite float"),0,10,&someFloat);
-    someInt32Parameter.setup(F("/someInt"),F("An exquisite integer"),0,10000,&someInt);
-    dumpCallbackParameter.setup(F("/dump"),F("Print Parameter Summary"),&dumpFunction);
-    loadCallbackParameter.setup(F("/load"),F("Load Settings."),&loadFunction);
-    saveCallbackParameter.setup(F("/save"),F("Save Settings."),&saveFunction);
+    // we use our own version of "F()" to work around the inconsistencies of the implementations on Arduino/ESP platforms.
+    someFloatParameter.setup(ARDUPAR_F("/someFloat"),ARDUPAR_F("An exquisite float"),0,10,5,&someFloat);
+    someInt32Parameter.setup(ARDUPAR_F("/someInt"),ARDUPAR_F("An exquisite integer"),0,10000,100,&someInt);
+    dumpCallbackParameter.setup(ARDUPAR_F("/dump"),ARDUPAR_F("Print Parameter Summary"),&dumpFunction);
+    loadCallbackParameter.setup(ARDUPAR_F("/load"),ARDUPAR_F("Load Settings."),&loadFunction);
+    saveCallbackParameter.setup(ARDUPAR_F("/save"),ARDUPAR_F("Save Settings."),&saveFunction);
     Serial.begin(115200);
     delay(500);
     parameterCollection.dumpParameterInfos(&Serial);
@@ -39,3 +40,4 @@ void setup(){
 void loop(){
     parameterCollection.updateParametersFromStream(&Serial,1000);
 }
+

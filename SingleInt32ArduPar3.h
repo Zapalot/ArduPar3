@@ -28,23 +28,23 @@ public:
 
   );
 
-  ARDUPAR_CONST_CHAR *getAddress() { return addressString; };         ///< get an address that will be used to pass information to this Parameter. Doesn't have to be unique. For osc compatibility and ease of building interfaces, a format like "/machine/part/setting" is recommended
-  ARDUPAR_CONST_CHAR *getDescription() { return descriptionString; }; ///< a human readable description of the parameter
+  ARDUPAR_CONST_CHAR *getAddress() const{ return addressString; };         ///< get an address that will be used to pass information to this Parameter. Doesn't have to be unique. For osc compatibility and ease of building interfaces, a format like "/machine/part/setting" is recommended
+  ARDUPAR_CONST_CHAR *getDescription() const{ return descriptionString; }; ///< a human readable description of the parameter
 
   void setValue(int32_t newValue); ///< set the value and rpint some debug info
-  int32_t getValue() { return *valuePointer; }
+  int32_t getValue() const{ return *valuePointer; }
   bool getAndClearValueChangedFlag(); ///< returns if the value has changed since the last call of this function
 
-  int getId() { return uniqueId; }; ///< a uinique identifier
+  int getId() const{ return uniqueId; }; ///< a uinique identifier
 
   void save();                                           ///< save content to NVM
   void load();                                           ///< save content from NVM
-  void dumpParameterInfo(Stream *out);                   ///< derived classed can give some information about semselves this way. preferably in a machine-readable way.
+  void dumpParameterInfo(Stream *out)const;                   ///< derived classed can give some information about semselves this way. preferably in a machine-readable way.
   void parseCommand(char *data);                         ///< digest incoming serial data that potentially contains a "set" command
-  size_t getValueAsText(char *buffer, size_t buflength); ///<  write value as a human readable text, with at most buflength characters
-  size_t getValueTextLength();                           ///< get size of the buffer needed for getValueAsText()
+  size_t getValueAsText(char *buffer, size_t buflength)const; ///<  write value as a human readable text, with at most buflength characters
+  size_t getValueTextLength()const;                           ///< get size of the buffer needed for getValueAsText()
 
-  ArduPar3Type getType(size_t position = 0); ///< to aid building of user interfaces at runtime
+  ArduPar3Type getType(size_t position = 0)const; ///< to aid building of user interfaces at runtime
 
   void setValueFromText(const char *data);                          ///< digest incoming string that only contains the value to be set (should be able to parse output of "getValueAsText")
   void setValueFromFloat(float value, size_t position = 0);   ///< set Value using a int32_ting point Number (and possibly a some single component of a vector)
@@ -53,10 +53,10 @@ public:
   void setValueFromDouble(double value, size_t position = 0); ///< set Value using a integer point Number. Bools can be handles by 0/1 (and possibly a some single component of a vector)
 
   // same here: these methods are primarily inteded to make interfaceing simple, imeplement them as you think they make sense
-  float getValueAsFloat(size_t position = 0);
-  int32_t getValueAsInt32(size_t position = 0);
-  bool getValueAsBool(size_t position = 0);
-  double getValueAsDouble(size_t position = 0);
+  float getValueAsFloat(size_t position = 0)const;
+  int32_t getValueAsInt32(size_t position = 0)const;
+  bool getValueAsBool(size_t position = 0)const;
+  double getValueAsDouble(size_t position = 0)const;
 
 protected:
   size_t uniqueId;

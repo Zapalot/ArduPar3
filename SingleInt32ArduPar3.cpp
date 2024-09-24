@@ -1,6 +1,5 @@
 #include "SingleInt32ArduPar3.h"
 
-
 void SingleInt32ArduPar3::setup(
      ARDUPAR_CONST_CHAR *address,
      ARDUPAR_CONST_CHAR *description,
@@ -16,7 +15,7 @@ void SingleInt32ArduPar3::setup(
 {
     this->addressString = address;
     this->descriptionString = description;
-    addressLength = strlen_P((const char PROGMEM *)addressString);
+    addressLength = ARDUPAR_CONST_STRLEN((ARDUPAR_CONST_CHAR_P *)addressString);
     if (valuePointer == 0){
         valuePointer = &this->value;
     }
@@ -91,7 +90,7 @@ void SingleInt32ArduPar3::load(){
     }
 }
 
-void SingleInt32ArduPar3::dumpParameterInfo(Stream *out){
+void SingleInt32ArduPar3::dumpParameterInfo(Stream *out)const{
     out->print(F("int32_t\t"));
     out->print(this->addressString);
     out->print(F("\t"));
@@ -110,7 +109,7 @@ void SingleInt32ArduPar3::parseCommand(char *data){
     TRACE((addressString));
     TRACE((F("to")));
     TRACELN((data));
-    int foundDiff = strncmp_P(data, (const char PROGMEM *)addressString,addressLength);
+    int foundDiff = ARDUPAR_CONST_STRNCMP(data, (ARDUPAR_CONST_CHAR_P *)addressString,addressLength);
     size_t dataLen=strlen(data);
     // check if the command continues beyond the address
     if(dataLen>addressLength){
@@ -119,7 +118,7 @@ void SingleInt32ArduPar3::parseCommand(char *data){
     if (foundDiff==0&&dataLen>=addressLength){
         TRACE(F("matched:"));
         TRACELN((addressString));
-        char* parameterData=data + strlen_P((const char PROGMEM *)addressString);
+        char* parameterData=data + ARDUPAR_CONST_STRLEN((ARDUPAR_CONST_CHAR_P *)addressString);
         setValueFromText(parameterData);
     }
 }
@@ -129,15 +128,15 @@ void SingleInt32ArduPar3::setValueFromText(const char *data)
     setValue(atol(data));
 }
 
-size_t SingleInt32ArduPar3::getValueAsText(char *buffer, size_t buflength){
+size_t SingleInt32ArduPar3::getValueAsText(char *buffer, size_t buflength)const{
 //  write value as a human readable text, with at most buflength characters
 return snprintf(buffer,buflength,"%ld",(long)getValue());
 }; 
-size_t SingleInt32ArduPar3::getValueTextLength(){
+size_t SingleInt32ArduPar3::getValueTextLength()const{
     return snprintf(NULL,0,"%ld",(long)getValue());
 }                        
 
-AbstractArduPar3::ArduPar3Type SingleInt32ArduPar3::getType(size_t position ){
+AbstractArduPar3::ArduPar3Type SingleInt32ArduPar3::getType(size_t position )const{
 return position==0?AbstractArduPar3::ArduPar3TypeInt32:ArduPar3TypeNone;
 };                   
 void SingleInt32ArduPar3::setValueFromFloat(float value, size_t position )
@@ -155,15 +154,15 @@ void SingleInt32ArduPar3::setValueFromDouble(double value, size_t position ){
 }
 
 // same here: these methods are primarily inteded to make interfaceing simple, imeplement them as you think they make sense
-float SingleInt32ArduPar3::getValueAsFloat(size_t position ){
+float SingleInt32ArduPar3::getValueAsFloat(size_t position )const{
     return (position==0?getValue():0);
 }
-int32_t SingleInt32ArduPar3::getValueAsInt32(size_t position ){
+int32_t SingleInt32ArduPar3::getValueAsInt32(size_t position )const{
     return (position==0?getValue():0);
 }
-bool SingleInt32ArduPar3::getValueAsBool(size_t position ){
+bool SingleInt32ArduPar3::getValueAsBool(size_t position )const{
     return (position==0?getValue():0);
 }
-double SingleInt32ArduPar3::getValueAsDouble(size_t position ){
+double SingleInt32ArduPar3::getValueAsDouble(size_t position )const{
     return (position==0?getValue():0);
 }

@@ -5,7 +5,6 @@
 #include "Arduino.h"
 
 #include "ArduPar3Helpers.h"
-#include "EepromWrapper.h"
 #include "ArduPar3Collection.h"
 
 #include "AbstractArduPar3.h"

@@ -15,7 +15,7 @@ void SingleBoolArduPar3::setup(
 {
     this->addressString = address;
     this->descriptionString = description;
-    addressLength = strlen_P((const char PROGMEM *)addressString);
+    addressLength = ARDUPAR_CONST_STRLEN((ARDUPAR_CONST_CHAR_P *)addressString);
     if (valuePointer == 0)
         valuePointer = &this->value;
     this->valuePointer = valuePointer;
@@ -98,7 +98,7 @@ void SingleBoolArduPar3::parseCommand(char *data){
     TRACE((addressString));
     TRACE((F("to")));
     TRACELN((data));
-    int foundDiff = strncmp_P(data, (const char PROGMEM *)addressString,addressLength);
+    int foundDiff = ARDUPAR_CONST_STRNCMP(data, (ARDUPAR_CONST_CHAR_P *)addressString,addressLength);
     size_t dataLen=strlen(data);
     // check if the command continues beyond the address
     if(dataLen>addressLength){
@@ -107,7 +107,7 @@ void SingleBoolArduPar3::parseCommand(char *data){
     if (foundDiff==0&&dataLen>=addressLength){
         TRACE(F("matched:"));
         TRACELN((addressString));
-        char* parameterData=data + strlen_P((const char PROGMEM *)addressString);
+        char* parameterData=data + ARDUPAR_CONST_STRLEN((ARDUPAR_CONST_CHAR_P *)addressString);
         setValueFromText(parameterData);
     }
 }
