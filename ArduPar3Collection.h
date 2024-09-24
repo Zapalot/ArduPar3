@@ -10,7 +10,7 @@ public:
    size_t numInstancesRegistered=0;
    size_t registerInstance(AbstractArduPar3 *instance);       ///returns a unique ID 
    void dumpParameterInfos(Stream *outStream);               ///< write information about all parameter instances to a stream
-   void updateParametersFromStream(Stream *inStream, int timeout); ///< distributes incoming data from a stream to the 
+   void updateParametersFromStream(Stream *inStream, unsigned long timeout); ///< distributes incoming data from a stream to the 
    void loadAll();
    void saveAll();
 };

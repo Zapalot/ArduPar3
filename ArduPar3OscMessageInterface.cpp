@@ -11,8 +11,8 @@ void ArduPar3OscMessageInterface::applyMessageToPars(OSCMessage &message, ArduPa
         AbstractArduPar3 *curPar = parameterCollection->knownInstances[parIdx];
         TRACE("-");
         TRACE(curPar->getAddress());
-        TRACELN((strcmp_P(message.getAddress(), (const char PROGMEM *)curPar->getAddress())));
-        if ((strcmp_P(message.getAddress(), (const char PROGMEM *)curPar->getAddress()) == 0))
+        TRACELN((ARDUPAR_CONST_STRCMP(message.getAddress(), (ARDUPAR_CONST_CHAR_P *)curPar->getAddress())));
+        if ((ARDUPAR_CONST_STRCMP(message.getAddress(), (ARDUPAR_CONST_CHAR_P *)curPar->getAddress()) == 0))
         {
             TRACE("No pars:");
         TRACELN(message.size());
